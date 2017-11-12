@@ -96,7 +96,7 @@
     margin-bottom: 1px;
   }
   .main-layout > .has-sider > .content {
-    padding: 0.7em 1em;
+    padding: 1em;
   }
   .fish.layout > .sider {
     border-right: 3px solid #e9e9e9;
@@ -113,7 +113,7 @@
     padding-left: 1em;
     float: left;
   }
-  .main-layout .fish.menu .item, .main-layout .fish.menu.inline .submenu.item.active {
+  .main-layout .sider .fish.menu .item, .main-layout .sider .fish.menu.inline .submenu.item.active {
     font-weight: bold;
     color: #6a6c6f;
     margin-right: -3px;
@@ -132,5 +132,9 @@
     /*border-bottom: 1px solid #e9e9e9;*/
     background: #f7f9fa;
     /*box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.1);*/
+  }
+
+  .form-search {
+    margin-bottom: .8em;
   }
 </style>

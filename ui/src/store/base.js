@@ -19,7 +19,7 @@ const getters = (moduleName) => {
 }
 const actions = (moduleName, modulePath) => {
   let ret = {}
-  ret[`${moduleName}Create`] = ({commit, dispatch, state}, payload) => {
+  ret[`${moduleName}Create`] = ({commit, dispatch, state}, payload = {}) => {
     return new Promise((resolve, reject) => {
       request(`/api/${modulePath}`, {method: 'POST', body: JSON.stringify(payload)}).then(({data, total}) => {
         commit(`${moduleName}Create`, data)
@@ -27,7 +27,7 @@ const actions = (moduleName, modulePath) => {
       })
     })
   }
-  ret[`${moduleName}Update`] = ({commit, dispatch, state}, id, payload) => {
+  ret[`${moduleName}Update`] = ({commit, dispatch, state}, id, payload = {}) => {
     return new Promise((resolve, reject) => {
       request(`/api/${modulePath}/${id}`, {method: 'PUT', body: JSON.stringify(payload)}).then(({data, total}) => {
         commit(`${moduleName}Update`, data)
@@ -43,7 +43,7 @@ const actions = (moduleName, modulePath) => {
       })
     })
   }
-  ret[`${moduleName}Get`] = ({commit, dispatch, state}, payload) => {
+  ret[`${moduleName}Get`] = ({commit, dispatch, state}, payload = {}) => {
     const { id } = payload
     return new Promise((resolve, reject) => {
       request(`/api/${modulePath}/${id}`).then(({data, total}) => {
@@ -52,11 +52,19 @@ const actions = (moduleName, modulePath) => {
       })
     })
   }
-  ret[`${moduleName}Query`] = ({commit, dispatch, state}, payload) => {
+  ret[`${moduleName}Query`] = ({commit, dispatch, state}, payload = {}) => {
     return new Promise((resolve, reject) => {
       commit(`${moduleName}Loading`)
       request(`/api/${modulePath}?limit=20&${querystring.stringify(payload)}`).then(({data, total}) => {
         commit(`${moduleName}Query`, {data, total, payload})
+        resolve()
+      })
+    })
+  }
+  ret[`${moduleName}All`] = ({commit, dispatch, state}) => {
+    return new Promise((resolve, reject) => {
+      request(`/api/${modulePath}/all`).then(({data}) => {
+        commit(`${moduleName}All`, data)
         resolve()
       })
     })
@@ -86,6 +94,9 @@ const mutations = (moduleName) => {
     state.total = total
     state.loading = false
     state.pagination = { total: total, current: payload['page'] || 1, rows: 20 }
+  }
+  ret[`${moduleName}All`] = (state, data) => {
+    state.items = data
   }
   return ret
 }

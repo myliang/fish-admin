@@ -42,6 +42,7 @@ public class UsersController {
             //  get role
             Role role = roleRepository.find(item.getRoleId());
             Map<String, Object> ret = new HashMap();
+            ret.put("id", item.getId());
             ret.put("userName", item.getUserName());
             ret.put("state", item.getState());
             ret.put("roleName", role != null ? role.getName() : "");

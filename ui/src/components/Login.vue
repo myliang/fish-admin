@@ -5,7 +5,7 @@
         F <i class="fa fa-flash"/> sh
       </div>
       <h3>Login</h3>
-      <fish-form @submit.prevent="submit">
+      <fish-form @submit.native.prevent="submit">
         <fish-field>
           <fish-input :iconLeft="true" icon="fa fa-user" hint="user name" v-model="userName"></fish-input>
         </fish-field>
@@ -78,7 +78,7 @@
     display: block;
     width: 120px;
     position: absolute;
-    top: 45px;
+    top: 42px;
     left: -150px;
     background-color: #f7f9fa;
     text-align: center;
@@ -87,6 +87,7 @@
     font-weight: bold;
     padding: 20px 0;
     font-size: 2rem;
+    border-right: 3px solid #e9e9e9;
   }
   .sign_in h3 {
     font-size: 1.2em;
