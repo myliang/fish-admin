@@ -13,7 +13,7 @@
           {title: 'Role Name', key: 'roleName'},
           {title: 'State', key: 'state'},
           {title: 'Created at', key: 'createdAt'},
-          {title: 'Operate', key: 'operate', render: (h, record, column) => h('a', 'edit')}
+          {title: 'Operate', key: 'operate', render: (h, record, column) => h('a', {on: {click: this.editHandler.bind(null, record)}}, 'edit')}
         ]
       }
     },
@@ -31,6 +31,9 @@
     methods: {
       loadData () {
         this.$store.dispatch('userQuery', {})
+      },
+      editHandler (record) {
+        console.log(record)
       }
     }
   }

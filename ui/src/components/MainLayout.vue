@@ -15,7 +15,7 @@
       </ul>
     </nav>
     <div slot="sider">
-      <fish-menu mode="inline" v-if="menus" :defaultActive="defaultActiveIndex">
+      <fish-menu mode="inline" v-if="menus" :defaultActive="defaultActiveIndex" @change="menuChangeHandler">
         <template v-for="menu in menus">
           <fish-submenu :index="menu.key" mode="inline" :key="menu.key" v-if="menu.children">
             <template slot="title">{{ menu.title }}</template>
@@ -53,12 +53,12 @@
   export default {
     name: 'main-layout',
     props: {
-      defaultActiveIndex: { type: String }
     },
     data () {
       return {
         userName: null,
-        menus: null
+        menus: null,
+        defaultActiveIndex: sessionStorage.getItem('menuActiveIndex') === 'undefined' ? undefined : sessionStorage.getItem('menuActiveIndex')
       }
     },
     mounted () {
@@ -76,6 +76,9 @@
       },
       nextRouter (url) {
         this.$router.push(url)
+      },
+      menuChangeHandler (index) {
+        sessionStorage.setItem('menuActiveIndex', index)
       }
     }
   }
@@ -118,7 +121,7 @@
 
   .logo {
     padding: 0 1em;
-    /*font-weight: bold;*/
+    font-weight: bold;
     font-size: 1.8rem;
     color: #566374;
     float: left;

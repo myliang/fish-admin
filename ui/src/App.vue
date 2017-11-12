@@ -1,9 +1,14 @@
 <template>
-  <main-layout>
-    <div id="app">
+  <div>
+    <main-layout v-if="$route.path !== '/login'">
+      <div id="app">
+        <router-view/>
+      </div>
+    </main-layout>
+    <div id="app" v-else>
       <router-view/>
     </div>
-  </main-layout>
+  </div>
 </template>
 
 <script>

@@ -84,7 +84,7 @@ const mutations = (moduleName) => {
     // console.log(data, ', total:', total, ', payload: ', payload)
     state.items = data
     state.total = total
-    // state.loading = false
+    state.loading = false
     state.pagination = { total: total, current: payload['page'] || 1, rows: 20 }
   }
   return ret

@@ -43,7 +43,7 @@ export default function request (url, options = {}) {
           reject(e)
         }
       }).catch(function (error) {
-        console.log(':::', window.$message, '>>>', error.response)
+        // console.log(':::', window.$message, '>>>', error.response)
         window.$message.warning(error.response.headers['statusText'] || 'request error!')
         // reject(error)
       })
