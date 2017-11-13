@@ -6,13 +6,14 @@ const state = {
   items: [],
   total: 0,
   loading: false,
-  pagination: null
+  pagination: null,
+  queryPayload: {}
 }
 const getters = (moduleName) => {
   let ret = {}
   Object.keys(state).forEach((stateName) => {
     let getterMethod = moduleName + stateName[0].toUpperCase() + stateName.substring(1)
-    console.log('getter: ', getterMethod)
+    // console.log('getter: ', getterMethod)
     ret[getterMethod] = (state) => state[stateName]
   })
   return ret
@@ -22,15 +23,20 @@ const actions = (moduleName, modulePath) => {
   ret[`${moduleName}Create`] = ({commit, dispatch, state}, payload = {}) => {
     return new Promise((resolve, reject) => {
       request(`/api/${modulePath}`, {method: 'POST', body: JSON.stringify(payload)}).then(({data, total}) => {
-        commit(`${moduleName}Create`, data)
+        // commit(`${moduleName}Create`, data)
+        dispatch(`${moduleName}Query`, state.queryPayload)
         resolve()
       })
     })
   }
-  ret[`${moduleName}Update`] = ({commit, dispatch, state}, id, payload = {}) => {
+  ret[`${moduleName}Update`] = ({commit, dispatch, state}, payload = {}) => {
+    const id = payload['id']
+    delete payload['id']
+    // console.log('id: ', id, ', payload: ', payload)
     return new Promise((resolve, reject) => {
       request(`/api/${modulePath}/${id}`, {method: 'PUT', body: JSON.stringify(payload)}).then(({data, total}) => {
-        commit(`${moduleName}Update`, data)
+        // commit(`${moduleName}Update`, data)
+        dispatch(`${moduleName}Query`, state.queryPayload)
         resolve()
       })
     })
@@ -38,7 +44,8 @@ const actions = (moduleName, modulePath) => {
   ret[`${moduleName}Delete`] = ({commit, dispatch, state}, id) => {
     return new Promise((resolve, reject) => {
       request(`/api/${modulePath}/${id}`, {method: 'DELETE'}).then(({data, total}) => {
-        commit(`${moduleName}Delete`, data)
+        // commit(`${moduleName}Delete`, data)
+        dispatch(`${moduleName}Query`, state.queryPayload)
         resolve()
       })
     })
@@ -55,6 +62,7 @@ const actions = (moduleName, modulePath) => {
   ret[`${moduleName}Query`] = ({commit, dispatch, state}, payload = {}) => {
     return new Promise((resolve, reject) => {
       commit(`${moduleName}Loading`)
+      commit(`${moduleName}QueryPayload`, payload)
       request(`/api/${modulePath}?limit=20&${querystring.stringify(payload)}`).then(({data, total}) => {
         commit(`${moduleName}Query`, {data, total, payload})
         resolve()
@@ -75,6 +83,9 @@ const mutations = (moduleName) => {
   let ret = {}
   ret[`${moduleName}Loading`] = (state) => {
     state.loading = true
+  }
+  ret[`${moduleName}QueryPayload`] = (state, payload) => {
+    state.queryPayload = payload
   }
   ret[`${moduleName}Create`] = (state, data) => {
     state.item = data

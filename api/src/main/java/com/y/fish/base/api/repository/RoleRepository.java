@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 
 /**
  * Created by myliang on 11/7/17.
@@ -20,7 +21,14 @@ public class RoleRepository extends BaseRepository<Role> {
     @Override
     public String[] columnNames() {
         return new String[] {
-                "name", "permissions"
+                "name", "permissions", "created_at", "updated_at"
+        };
+    }
+
+    @Override
+    public int[] columnTypes() {
+        return new int[] {
+                Types.VARCHAR, Types.CLOB, Types.TIMESTAMP, Types.TIMESTAMP
         };
     }
 

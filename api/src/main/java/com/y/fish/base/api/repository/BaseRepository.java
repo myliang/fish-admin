@@ -2,6 +2,7 @@ package com.y.fish.base.api.repository;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.escape.ArrayBasedUnicodeEscaper;
 import com.y.fish.base.api.model.Storage;
 import com.y.fish.base.api.sql.Pagination;
 import com.y.fish.base.api.sql.SqlQuery;
@@ -11,21 +12,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.PreparedStatementCreatorFactory;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
 import java.lang.reflect.Field;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.sql.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
  * Created by myliang on 11/7/17.
+ * 涉及到插入和更新，如果在存在created_at, updated_at字段，那么请不要设置任何值，系统会自动设置time更新数据库
  */
 public abstract class BaseRepository<T> {
 
@@ -43,6 +45,7 @@ public abstract class BaseRepository<T> {
 
     public abstract String tableName();
     public abstract String[] columnNames();
+    public abstract int[] columnTypes();
     public abstract T convert(ResultSet rs) throws SQLException;
 
     public String selectSql() {
@@ -54,6 +57,8 @@ public abstract class BaseRepository<T> {
     public String primaryKeyName() {
         return "id";
     }
+    public String createdAtName() { return "created_at"; }
+    public String updatedAtName() { return "updated_at"; }
 
     public T find(long id) {
         return find(primaryKeyName() + " = ?", new Object[]{id});
@@ -119,21 +124,24 @@ public abstract class BaseRepository<T> {
 
     public T save(T t) throws Exception {
         String[] columnNames = columnNames();
+        int[] columnTypes = columnTypes();
         List<Object> values = new ArrayList<>();
         List<String> keys = new ArrayList<>();
+        List<Integer> types = new ArrayList<>();
         for (int i = 0; i < columnNames.length; i++) {
             String columnName = columnNames[i];
             String fieldName = changeColumnToFieldName(columnName);
-            Field field = t.getClass().getDeclaredField(fieldName);
+            Field field = getDeclaredField(t.getClass(), fieldName);
             Object v = field.get(t);
             if (v != null) {
                 keys.add(columnName);
                 values.add(v);
+                types.add(columnTypes[i]);
             }
         }
-        long id = insert(keys.toArray(new String[keys.size()]), values.toArray(new Object[values.size()]));
-        Field idField = t.getClass().getDeclaredField(primaryKeyName());
-        idField.setAccessible(true);
+
+        long id = insert(keys, values, types.stream().mapToInt(type -> type).toArray());
+        Field idField = getDeclaredField(t.getClass(), primaryKeyName());
         idField.set(t, id);
         return t;
     }
@@ -145,10 +153,10 @@ public abstract class BaseRepository<T> {
         List<String> keys = new ArrayList<>();
         for (int i = 0; i < columnNames.length; i++) {
             String columnName = columnNames[i];
-            if (columnName.equals("created_at")) continue;
+            if (columnName.equals(createdAtName())) continue;
 
             String fieldName = changeColumnToFieldName(columnName);
-            Field field = t.getClass().getDeclaredField(fieldName);
+            Field field = getDeclaredField(t.getClass(), fieldName);
             Object v = field.get(t);
             Object oldV = field.get(old);
             if (v != null && !v.equals(oldV)) {
@@ -160,28 +168,51 @@ public abstract class BaseRepository<T> {
         update(keys.toArray(new String[keys.size()]), values.toArray(new Object[values.size()]), id);
     }
 
-    public long insert(String[] columns, Object[] args) {
-        String insertColumns = "";
-        String insertPlaceholders = "";
+    public long insert(List<String> columns, List<Object> args, int[] types) {
+        String insertColumns = primaryKeyName();
+        String insertPlaceholders = "nextval('"+tableName()+"_id_seq')";
         for (String column : columns) {
-            insertColumns += column + ",";
-            insertPlaceholders += "?,";
+            insertColumns += "," + column;
+            insertPlaceholders += ",?";
         }
 
-        String sql = "insert into " + Storage.TABLE_NAME +
-                " ("+insertColumns.substring(0, insertColumns.length() - 1)+") values ("+
-                insertPlaceholders.substring(0, insertPlaceholders.length() - 1)+")";
+        insertColumns += ", " + createdAtName();
+        insertPlaceholders += ", now()";
+        insertColumns += ", " + updatedAtName();
+        insertPlaceholders += ", now()";
+
+        String sql = "insert into " + tableName() +
+                " ("+insertColumns+") values ("+insertPlaceholders+")";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        PreparedStatementCreatorFactory pscf = new PreparedStatementCreatorFactory(sql);
+
+        PreparedStatementCreatorFactory pscf = new PreparedStatementCreatorFactory(sql, types);
+        pscf.setReturnGeneratedKeys(true);
+        try {
+            logger.info("insert.sql: {}, args: {}", sql, jsonMapper.writeValueAsString(args));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
         writeJdbcTemplate.update(pscf.newPreparedStatementCreator(args), keyHolder);
-        return keyHolder.getKey().longValue();
+        if (keyHolder.getKeyList() != null && !keyHolder.getKeyList().isEmpty()) {
+            return (long) keyHolder.getKeyList().get(0).get(primaryKeyName());
+        }
+        return -1;
     }
 
     public void update(String[] columns, Object[] args, long id) {
+        if (columns == null || columns.length <= 0) return;
+
         String sql = "update " + tableName() + " set ";
+        sql += updatedAtName() + " = now(), ";
+
         sql += Arrays.stream(columns).map((column) -> column + " = ?").collect(Collectors.joining(","));
-        sql += " where id = ?";
+        sql += " where id = " + id;
+        try {
+            logger.info("update.sql: {}, args: {}", sql, jsonMapper.writeValueAsString(args));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
         writeJdbcTemplate.update(sql, args);
     }
 
@@ -199,11 +230,27 @@ public abstract class BaseRepository<T> {
 
     public static String changeColumnToFieldName(String columnName) {
         String[] array = columnName.split("_");
-        StringBuffer sb = new StringBuffer();
-        for (String cn : array) {
+        StringBuffer sb = new StringBuffer(array[0]);
+        for (int i = 1; i < array.length; i++) {
+            String cn = array[i];
             sb.append(cn.substring(0, 1).toUpperCase()).append(cn.substring(1));
         }
         return sb.toString();
+    }
+
+    static Map<Class, Map<String, Field>> fieldMapCache = new HashMap();
+
+    static Field getDeclaredField(Class target, String fieldName) throws NoSuchFieldException {
+        if (!fieldMapCache.containsKey(target)) {
+            fieldMapCache.put(target, new HashMap<>());
+        }
+        Map<String, Field> targetMap = fieldMapCache.get(target);
+        if (!targetMap.containsKey(fieldName)) {
+            Field field = target.getDeclaredField(fieldName);
+            field.setAccessible(true);
+            targetMap.put(fieldName, field);
+        }
+        return targetMap.get(fieldName);
     }
 
 }

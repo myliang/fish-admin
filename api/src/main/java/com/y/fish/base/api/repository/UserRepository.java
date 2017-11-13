@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 
 /**
  * Created by myliang on 7/20/17.
@@ -31,7 +32,14 @@ public class UserRepository extends BaseRepository<User> {
     @Override
     public String[] columnNames() {
         return new String[] {
-                "user_name", "encrypted_password", "state", "created_at"
+                "user_name", "encrypted_password", "state", "created_at", "updated_at"
+        };
+    }
+
+    @Override
+    public int[] columnTypes() {
+        return new int[] {
+                Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.TIMESTAMP, Types.TIMESTAMP
         };
     }
 

@@ -73,7 +73,7 @@ public class RolesController {
         return ResponseEntity.ok("{}");
     }
 
-    @PatchMapping({"/{id}"})
+    @PutMapping({"/{id}"})
     @PreAuthorize("hasPermission('Role', 'update')")
     public ResponseEntity update(@PathVariable Long id, @Validated @RequestBody Role role) throws Exception {
         roleRepository.update(role, id);

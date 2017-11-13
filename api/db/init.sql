@@ -4,13 +4,15 @@ create table users (
   encrypted_password varchar,
   role_id bigint,
   state varchar,
-  created_at timestamp
+  created_at timestamp,
+  updated_at timestamp
 );
 create table roles (
   id bigserial primary key not null,
   name varchar,
   permissions text,
-  created_at timestamp
+  created_at timestamp,
+  updated_at timestamp
 );
 create table menus (
   id bigserial primary key not null,
@@ -36,7 +38,7 @@ create table storages (
 );
 
 -- admin/123456
-insert into users(id, user_name, encrypted_password, state, created_at) values (1, 'admin', '$2a$10$apcHrdYrw.4mV6jUgVSX9ubLdnv6CyrM9Bp7a/eYoO4gOGak8ksJG', 'enable', now());
+insert into users(id, user_name, encrypted_password, state, created_at, updated_at) values (1, 'admin', '$2a$10$apcHrdYrw.4mV6jUgVSX9ubLdnv6CyrM9Bp7a/eYoO4gOGak8ksJG', 'enable', now(), now());
 
 insert into menus(id, parent_id, key, name, url) values (1, 0, 'sys', 'System', '');
 insert into menus(id, parent_id, key, name, url) values (10, 1, 'user', 'User', '/users');

@@ -1,9 +1,11 @@
 package com.y.fish.base.api.model;
 
+import com.google.common.base.Strings;
 import lombok.Data;
 import org.springframework.boot.json.JsonParserFactory;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,7 +23,9 @@ public class Role {
 
     private String permissions;
 
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
 
     /**
      * 验证是否有访问权限
@@ -30,6 +34,7 @@ public class Role {
      * @return
      */
     public boolean hasPermission(Object entity, Object access) {
+        if (Strings.isNullOrEmpty(permissions)) return false;
         Map ps = JsonParserFactory.getJsonParser().parseMap(permissions);
 
         String entityName;
@@ -54,7 +59,8 @@ public class Role {
     }
 
     public Map getPermissionsMap() {
-        return JsonParserFactory.getJsonParser().parseMap(permissions);
+        return Strings.isNullOrEmpty(permissions) ?
+                new HashMap() : JsonParserFactory.getJsonParser().parseMap(permissions);
     }
 
 

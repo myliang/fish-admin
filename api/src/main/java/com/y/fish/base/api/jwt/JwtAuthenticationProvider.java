@@ -29,6 +29,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
         User user = userRepository.findByUserName(name);
         if (user == null) throw new UsernameNotFoundException("username not found!");
+        if (!user.isEnable()) throw new AuthenticationException("user has been disabled!") {};
         // 认证逻辑
         if (user.validatePassword(password)) {
 

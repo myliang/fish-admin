@@ -1,5 +1,6 @@
 package com.y.fish.base.api.controller;
 
+import com.google.common.base.Strings;
 import com.y.fish.base.api.model.Role;
 import com.y.fish.base.api.model.User;
 import com.y.fish.base.api.repository.RoleRepository;
@@ -60,15 +61,21 @@ public class UsersController {
     @PostMapping(value = {"", "/"})
     @PreAuthorize("hasPermission('User', 'create')")
     public ResponseEntity create(@Validated @RequestBody User user) throws Exception {
-        user.setEncoderPassword("123456");
+        if (Strings.isNullOrEmpty(user.getPassword())) {
+            user.setEncoderPassword("123456");
+        } else {
+            user.setEncoderPassword(user.getPassword());
+        }
         userRepository.save(user);
         return ResponseEntity.ok("{}");
     }
 
-    @PatchMapping({"/{id}"})
+    @PutMapping({"/{id}"})
     @PreAuthorize("hasPermission('User', 'update')")
     public ResponseEntity update(@PathVariable Long id, @RequestBody User user) throws Exception {
-        user.setEncoderPassword(user.getPassword());
+        if (!Strings.isNullOrEmpty(user.getPassword())) {
+            user.setEncoderPassword(user.getPassword());
+        }
         userRepository.update(user, id);
         return ResponseEntity.ok("{}");
     }

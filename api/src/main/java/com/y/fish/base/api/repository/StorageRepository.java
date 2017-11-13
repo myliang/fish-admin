@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 
 /**
  * Created by myliang on 11/7/17.
@@ -25,6 +26,13 @@ public class StorageRepository extends BaseRepository<Storage> {
     public String[] columnNames() {
         return new String[] {
                 "file_hash", "file_name", "file_size", "file_type", "original_file_name", "created_at"
+        };
+    }
+
+    @Override
+    public int[] columnTypes() {
+        return new int[] {
+                Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.TIMESTAMP_WITH_TIMEZONE
         };
     }
 

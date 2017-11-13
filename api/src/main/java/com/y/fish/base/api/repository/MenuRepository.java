@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.List;
 
 /**
@@ -22,6 +23,13 @@ public class MenuRepository extends BaseRepository<Menu> {
     public String[] columnNames() {
         return new String[] {
                 "name", "key", "parent_id", "url"
+        };
+    }
+
+    @Override
+    public int[] columnTypes() {
+        return new int[] {
+                Types.VARCHAR, Types.VARCHAR, Types.BIGINT, Types.VARCHAR
         };
     }
 

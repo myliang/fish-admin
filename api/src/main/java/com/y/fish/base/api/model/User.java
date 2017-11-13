@@ -24,7 +24,9 @@ public class User {
     @JsonIgnore
     private String password;
 
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
 
     private State state = State.enable;
 
