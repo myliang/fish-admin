@@ -1,5 +1,6 @@
 package com.y.fish.base.api.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.Strings;
 import lombok.Data;
 import org.springframework.boot.json.JsonParserFactory;
@@ -58,6 +59,7 @@ public class Role {
         return false;
     }
 
+    @JsonIgnore
     public Map getPermissionsMap() {
         return Strings.isNullOrEmpty(permissions) ?
                 new HashMap() : JsonParserFactory.getJsonParser().parseMap(permissions);

@@ -25,7 +25,7 @@
         columns: [
           {title: '#', type: 'index', width: '50', align: 'center'},
           {title: 'name', key: 'name'},
-          {title: 'Permissions', key: 'permissions'},
+          {title: 'Permissions', key: 'permissions', render: (h, {permissions}, column) => h('span', {}, Array.isArray(permissions) ? permissions.join(', ') : '')},
           {title: 'Created at', key: 'createdAt'},
           {title: 'Operate', key: 'operate', render: (h, record, column) => h('a', {on: {click: this.editHandler.bind(null, record)}}, 'edit')}
         ]
@@ -57,6 +57,7 @@
         this.editVisible = true
       },
       updateHandler (form) {
+        // permissions convert list to map
         if (this.record === null) {
           this.$store.dispatch('roleCreate', form)
         } else {

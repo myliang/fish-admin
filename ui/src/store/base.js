@@ -9,6 +9,10 @@ const state = {
   pagination: null,
   queryPayload: {}
 }
+const filters = {
+  saveBefore (state, payload) {},
+  queryAfter (data) {}
+}
 const getters = (moduleName) => {
   let ret = {}
   Object.keys(state).forEach((stateName) => {
@@ -21,6 +25,7 @@ const getters = (moduleName) => {
 const actions = (moduleName, modulePath) => {
   let ret = {}
   ret[`${moduleName}Create`] = ({commit, dispatch, state}, payload = {}) => {
+    filters.saveBefore(state, payload)
     return new Promise((resolve, reject) => {
       request(`/api/${modulePath}`, {method: 'POST', body: JSON.stringify(payload)}).then(({data, total}) => {
         // commit(`${moduleName}Create`, data)
@@ -30,6 +35,7 @@ const actions = (moduleName, modulePath) => {
     })
   }
   ret[`${moduleName}Update`] = ({commit, dispatch, state}, payload = {}) => {
+    filters.saveBefore(state, payload)
     const id = payload['id']
     delete payload['id']
     // console.log('id: ', id, ', payload: ', payload)
@@ -101,6 +107,7 @@ const mutations = (moduleName) => {
   }
   ret[`${moduleName}Query`] = (state, {data, total, payload}) => {
     // console.log(data, ', total:', total, ', payload: ', payload)
+    filters.queryAfter(state, data)
     state.items = data
     state.total = total
     state.loading = false
@@ -114,6 +121,7 @@ const mutations = (moduleName) => {
 
 export default {
   state,
+  filters,
   getters,
   actions,
   mutations

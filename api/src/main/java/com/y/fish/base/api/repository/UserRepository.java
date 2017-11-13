@@ -51,6 +51,7 @@ public class UserRepository extends BaseRepository<User> {
         user.setEncryptedPassword(rs.getString("encrypted_password"));
         user.setState(User.State.valueOf(rs.getString("state")));
         user.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+        user.setCreatedAt(rs.getTimestamp("updated_at").toLocalDateTime());
         return user;
     }
 

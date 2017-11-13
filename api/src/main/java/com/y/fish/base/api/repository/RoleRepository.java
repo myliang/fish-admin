@@ -38,6 +38,8 @@ public class RoleRepository extends BaseRepository<Role> {
         role.setId(rs.getLong("id"));
         role.setName(rs.getString("name"));
         role.setPermissions(rs.getString("permissions"));
+        role.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+        role.setCreatedAt(rs.getTimestamp("updated_at").toLocalDateTime());
         return role;
     }
 
