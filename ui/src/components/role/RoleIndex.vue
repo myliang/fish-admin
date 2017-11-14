@@ -1,7 +1,7 @@
 <template>
   <div>
     <role-search @ok="searchHandler"></role-search>
-    <fish-table :columns="columns" :data="data" :loading="loading" :pagination="pagination">
+    <fish-table :columns="columns" :data="data" :loading="loading" :pagination="pagination" @change="changeHandler">
       <fish-button @click="addHandler" slot="bottomLeft"><i class="fa fa-plus"></i> </fish-button>
     </fish-table>
     <fish-modal :visible.sync="editVisible" title="Role Information...">
@@ -22,6 +22,7 @@
       return {
         editVisible: false,
         record: null,
+        queryPayLoad: {},
         columns: [
           {title: '#', type: 'index', width: '50', align: 'center'},
           {title: 'name', key: 'name'},
@@ -67,7 +68,11 @@
         this.editVisible = false
       },
       searchHandler (form) {
+        this.queryPayLoad = form
         this.$store.dispatch('roleQuery', form)
+      },
+      changeHandler (currentPage, filters) {
+        this.$store.dispatch('roleQuery', Object.assign({page: currentPage}, this.queryPayLoad))
       }
     }
   }

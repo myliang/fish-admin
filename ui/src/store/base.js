@@ -1,6 +1,8 @@
 import request from '../request'
 import querystring from 'querystring'
 
+const pageRows = 5
+
 const state = {
   item: null,
   items: [],
@@ -69,7 +71,7 @@ const actions = (moduleName, modulePath) => {
     return new Promise((resolve, reject) => {
       commit(`${moduleName}Loading`)
       commit(`${moduleName}QueryPayload`, payload)
-      request(`/api/${modulePath}?limit=20&${querystring.stringify(payload)}`).then(({data, total}) => {
+      request(`/api/${modulePath}?rows=${pageRows}&${querystring.stringify(payload)}`).then(({data, total}) => {
         commit(`${moduleName}Query`, {data, total, payload})
         resolve()
       })
@@ -111,7 +113,7 @@ const mutations = (moduleName) => {
     state.items = data
     state.total = total
     state.loading = false
-    state.pagination = { total: total, current: payload['page'] || 1, rows: 20 }
+    state.pagination = { total: total, current: payload['page'] || 1, rows: pageRows }
   }
   ret[`${moduleName}All`] = (state, data) => {
     state.items = data

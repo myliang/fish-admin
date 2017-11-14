@@ -30,10 +30,11 @@ base.filters = Object.assign(base.filters, {
   queryAfter (state, data) {
     data.forEach((item) => {
       if (item.permissions) {
+        // console.log(item.permissions, ':::', state.permissions)
         let pMap = JSON.parse(item.permissions)
         let nPermissions = []
         Object.keys(pMap).forEach((key) => {
-          if (pMap[key].length === state.permissions[key].length) {
+          if (state.permissions[key] && pMap[key].length === state.permissions[key].length) {
             nPermissions.push(key)
           } else {
             pMap[key].forEach((k) => {

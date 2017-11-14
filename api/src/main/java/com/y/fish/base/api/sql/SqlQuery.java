@@ -47,7 +47,7 @@ public class SqlQuery {
     public int pageOffset() {
         String offset = request.getParameter("page");
         if (offset != null && !"".equalsIgnoreCase(offset)) {
-            return Integer.parseInt(offset);
+            return Integer.parseInt(offset) > 0 ? Integer.parseInt(offset) - 1 : 0;
         }
         return 0;
     }

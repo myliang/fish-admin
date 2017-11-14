@@ -16,6 +16,7 @@
     </nav>
     <div slot="sider">
       <fish-menu mode="inline" v-if="menus" :defaultActive="defaultActiveIndex" @change="menuChangeHandler">
+        <fish-option index="home" content="Home" @click="nextRouter('/')"></fish-option>
         <template v-for="menu in menus">
           <fish-submenu :index="menu.key" mode="inline" :key="menu.key" v-if="menu.children">
             <template slot="title">{{ menu.title }}</template>
@@ -58,7 +59,7 @@
       return {
         userName: null,
         menus: null,
-        defaultActiveIndex: sessionStorage.getItem('menuActiveIndex') === 'undefined' ? undefined : sessionStorage.getItem('menuActiveIndex')
+        defaultActiveIndex: sessionStorage.getItem('menuActiveIndex') === 'undefined' ? '/' : sessionStorage.getItem('menuActiveIndex')
       }
     },
     mounted () {
