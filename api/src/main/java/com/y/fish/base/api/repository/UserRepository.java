@@ -32,14 +32,14 @@ public class UserRepository extends BaseRepository<User> {
     @Override
     public String[] columnNames() {
         return new String[] {
-                "user_name", "encrypted_password", "state", "created_at", "updated_at"
+                "user_name", "role_id", "encrypted_password", "state", "created_at", "updated_at"
         };
     }
 
     @Override
     public int[] columnTypes() {
         return new int[] {
-                Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.TIMESTAMP, Types.TIMESTAMP
+                Types.VARCHAR, Types.BIGINT, Types.VARCHAR, Types.VARCHAR, Types.TIMESTAMP, Types.TIMESTAMP
         };
     }
 
@@ -47,6 +47,7 @@ public class UserRepository extends BaseRepository<User> {
     public User convert(ResultSet rs) throws SQLException {
         User user = new User();
         user.setId(rs.getLong("id"));
+        user.setRoleId(rs.getLong("role_id"));
         user.setUserName(rs.getString("user_name"));
         user.setEncryptedPassword(rs.getString("encrypted_password"));
         user.setState(User.State.valueOf(rs.getString("state")));
