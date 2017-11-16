@@ -10,7 +10,7 @@
     </fish-fields>
     <fish-fields>
       <fish-field span="12" label="Role">
-        <fish-select v-model="form.roleId">
+        <fish-select v-model="form.roleId" :disabled="'admin' === form.userName">
           <fish-option :index="role.id" :content="role.name" v-for="role in roles" :key="role.id"></fish-option>
         </fish-select>
       </fish-field>

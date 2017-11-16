@@ -44,8 +44,8 @@
     permissions: {},
     hasPermissions (k, v) {
       if (this.permissions[k] !== undefined) {
-        for (let index of this.permissions[k]) {
-          if (this.permissions[k][index] === v) return true
+        for (let permission of this.permissions[k]) {
+          if (permission === v) return true
         }
       }
       return false
@@ -73,6 +73,7 @@
     methods: {
       exit () {
         sessionStorage.removeItem('token')
+        sessionStorage.removeItem('menuActiveIndex')
         this.$router.replace('/login')
       },
       nextRouter (url) {

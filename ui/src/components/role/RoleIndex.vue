@@ -23,12 +23,23 @@
         editVisible: false,
         record: null,
         queryPayLoad: {},
+        currentUser: window.$currentUser,
         columns: [
           {title: '#', type: 'index', width: '50', align: 'center'},
           {title: 'name', key: 'name'},
           {title: 'Permissions', key: 'permissions', render: (h, {permissions}, column) => h('span', {}, Array.isArray(permissions) ? permissions.join(', ') : '')},
           {title: 'Created at', key: 'createdAt'},
-          {title: 'Operate', key: 'operate', render: (h, record, column) => h('a', {on: {click: this.editHandler.bind(null, record)}}, 'edit')}
+          {
+            title: 'Operate',
+            key: 'operate',
+            render: (h, record, column) => {
+              if (this.currentUser.hasPermissions('Role', 'update')) {
+                return h('a', {on: {click: this.editHandler.bind(null, record)}}, 'Edit')
+              } else {
+                return h('span', '')
+              }
+            }
+          }
         ]
       }
     },

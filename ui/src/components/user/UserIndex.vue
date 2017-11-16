@@ -2,7 +2,7 @@
   <div>
     <user-search :states="states" @ok="searchHandler"></user-search>
     <fish-table :columns="columns" :data="data" :loading="loading" :pagination="pagination" @change="changeHandler">
-      <fish-button @click="addHandler" slot="bottomLeft"><i class="fa fa-plus"></i> </fish-button>
+      <fish-button @click="addHandler" slot="bottomLeft" v-if="currentUser.hasPermissions('User', 'create')"><i class="fa fa-plus"></i> </fish-button>
     </fish-table>
     <fish-modal :visible.sync="editVisible" title="User Information...">
       <user-edit :states="states" :roles="roles" :record="record" @ok="updateHandler"></user-edit>
@@ -24,13 +24,24 @@
         record: null,
         queryPayLoad: {},
         states: [['enable', 'Enable'], ['disable', 'Disable']],
+        currentUser: window.$currentUser,
         columns: [
           {title: '#', type: 'index', width: '50', align: 'center'},
           {title: 'User name', key: 'userName'},
           {title: 'Role Name', key: 'roleName'},
           {title: 'State', key: 'state'},
           {title: 'Created at', key: 'createdAt'},
-          {title: 'Operate', key: 'operate', render: (h, record, column) => h('a', {on: {click: this.editHandler.bind(null, record)}}, 'edit')}
+          {
+            title: 'Operate',
+            key: 'operate',
+            render: (h, record, column) => {
+              if (this.currentUser.hasPermissions('User', 'update')) {
+                return h('a', {on: {click: this.editHandler.bind(null, record)}}, 'Edit')
+              } else {
+                return h('span', '')
+              }
+            }
+          }
         ]
       }
     },

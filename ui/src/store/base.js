@@ -93,7 +93,7 @@ const mutations = (moduleName) => {
     state.loading = true
   }
   ret[`${moduleName}QueryPayload`] = (state, payload) => {
-    state.queryPayload = payload
+    state.queryPayload = Object.assign({}, payload)
   }
   ret[`${moduleName}Create`] = (state, data) => {
     state.item = data
