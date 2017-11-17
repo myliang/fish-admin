@@ -67,6 +67,9 @@
   }
 </script>
 <style>
+  body {
+    height: auto;
+  }
   .sign_in {
     position: relative;
     margin: 100px auto;

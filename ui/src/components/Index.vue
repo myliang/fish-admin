@@ -1,6 +1,5 @@
 <template>
-  <fish-calendar>
-  </fish-calendar>
+  <h3>Welcome to you!!</h3>
 </template>
 <script>
   export default {}
