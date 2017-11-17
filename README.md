@@ -4,8 +4,8 @@
 > api: based on springboot (java)
 
 # Page preview
- ![image](https://github.com/myliang/fish-admin/raw/master/images/login.jpg)
- ![image](https://github.com/myliang/fish-admin/raw/master/images/main.jpg)
+ ![image](https://raw.githubusercontent.com/myliang/fish-admin/master/images/login.png)
+ ![image](https://raw.githubusercontent.com/myliang/fish-admin/master/images/main.png)
 # Quick Start
 ``` bash
 $ git clone https://github.com/myliang/fish-admin.git

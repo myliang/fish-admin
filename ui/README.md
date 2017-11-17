@@ -1,6 +1,6 @@
-# dcui
+# fish-admin ui
 
-> data collection ui
+> fish-admin ui based on fish-ui (vue 2)
 
 ## Build Setup
 
