@@ -38,7 +38,7 @@ public class FileUploadController {
 
         try {
             Resource file = storageService.loadAsResource(fileName);
-            String fileExtendName = fileName.split("\\.")[1];
+            String fileExtendName = fileName.substring(fileName.lastIndexOf(".") + 1);
             String[] wh = size.split("_");
             int w = Integer.parseInt(wh[0]);
             int h = Integer.parseInt(wh[1]);

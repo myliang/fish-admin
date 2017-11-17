@@ -57,7 +57,7 @@ public class StorageService {
             throw new Exception("Failed to store empty file " + file.getOriginalFilename());
         }
 
-        String fileType = file.getOriginalFilename().split("\\.")[1];
+        String fileType = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".") + 1);
         byte[] bytes;
         // 如果原图片大于1M, 那么压缩图片
         if (file.getSize() > M) {

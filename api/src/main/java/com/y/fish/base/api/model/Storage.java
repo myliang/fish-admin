@@ -27,7 +27,7 @@ public class Storage {
     private LocalDateTime createdAt = LocalDateTime.now();
 
     public String getPath() {
-        return fileHash + "." + originalFileName.split("\\.")[1];
+        return fileHash + "." + originalFileName.substring(originalFileName.lastIndexOf(".") + 1);
     }
 
 }
