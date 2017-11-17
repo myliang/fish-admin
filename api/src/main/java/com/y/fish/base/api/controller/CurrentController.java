@@ -1,5 +1,6 @@
 package com.y.fish.base.api.controller;
 
+import com.google.common.base.Strings;
 import com.y.fish.base.api.model.Menu;
 import com.y.fish.base.api.model.Resource;
 import com.y.fish.base.api.model.Role;
@@ -9,10 +10,9 @@ import com.y.fish.base.api.repository.ResourceRepository;
 import com.y.fish.base.api.repository.RoleRepository;
 import com.y.fish.base.api.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -36,6 +36,33 @@ public class CurrentController {
 
     @Autowired
     MenuRepository menuRepository;
+
+    @PutMapping("/password")
+    public ResponseEntity updatePassword (@RequestBody Map map) throws Exception {
+        String userName = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userRepository.findByUserName(userName);
+        String oldPassword = (String) map.get("oldPassword");
+        String newPassword = (String) map.get("newPassword");
+        String confirmPassword = (String) map.get("confirmPassword");
+        if (Strings.isNullOrEmpty(oldPassword)) {
+            throw new RuntimeException("Old password is empty!");
+        }
+        if (Strings.isNullOrEmpty(newPassword)) {
+            throw new RuntimeException("New password is empty!");
+        }
+        if (Strings.isNullOrEmpty(confirmPassword)) {
+            throw new RuntimeException("Confirm password is empty!");
+        }
+        if (!user.validatePassword(oldPassword)) {
+            throw new RuntimeException("Old password is error!");
+        }
+        if (!newPassword.equals(confirmPassword)) {
+            throw new RuntimeException("New password is not equal confirm new password!");
+        }
+        user.setEncoderPassword(newPassword);
+        userRepository.update(user, user.getId());
+        return ResponseEntity.ok("{}");
+    }
 
     @GetMapping("/user")
     public Map user() {

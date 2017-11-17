@@ -8,7 +8,7 @@
         <li>
           <fish-dropdown align="bottom-right">
             <a slot="title">{{userName}}<i class="fa fa-angle-down" style="margin-left: 10px;"></i></a>
-            <fish-option index="settings" content="Settings"></fish-option>
+            <fish-option index="settings" content="Settings" @click="nextRouter('/settings')"></fish-option>
             <fish-option index="exit" content="Exit" @click="exit"></fish-option>
           </fish-dropdown>
         </li>

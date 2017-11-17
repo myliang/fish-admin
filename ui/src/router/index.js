@@ -11,6 +11,7 @@ const authLogin = () => {
 
 import Login from '../components/Login.vue'
 import Index from '../components/Index.vue'
+import Settings from '../components/current/Settings.vue'
 import UserIndex from '../components/user/UserIndex.vue'
 import RoleIndex from '../components/role/RoleIndex.vue'
 
@@ -19,6 +20,7 @@ const router = new Router({
   base: '/_fish/',
   routes: [
     {path: '/', component: Index, meta: {auth: true}},
+    {path: '/settings', component: Settings, meta: {auth: true}},
     {path: '/users', component: UserIndex, meta: {auth: true}},
     {path: '/roles', component: RoleIndex, meta: {auth: true}},
     {path: '/login', component: Login, meta: {auth: false}}

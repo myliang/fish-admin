@@ -22,14 +22,14 @@ public class ApplicationErrorHandler {
 
     @ExceptionHandler(Exception.class)
     public Object defaultErrorHandler(HttpServletRequest req, Exception e) {
-        logger.error("Exception: ", e);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).header("message", e.getMessage()).build();
+        logger.error("Exception: {}", e.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).header("X-Message", e.getMessage()).build();
     }
 
     @ExceptionHandler(value=MethodArgumentNotValidException.class)
     public ResponseEntity validErrorHandler(HttpServletRequest req, MethodArgumentNotValidException e) {
-        logger.error("MethodArgumentNotValidException: ", e);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).header("message", e.getMessage()).build();
+        logger.error("MethodArgumentNotValidException: {}", e.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).header("X-Message", e.getMessage()).build();
     }
 
 }

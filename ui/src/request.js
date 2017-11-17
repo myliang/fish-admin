@@ -34,8 +34,8 @@ export default function request (url, options = {}) {
               data: data,
               total: 0
             }
-            if (response.headers.get('x-total-count')) {
-              ret.total = parseInt(response.headers.get('x-total-count'))
+            if (response.headers.get('X-Total-Count')) {
+              ret.total = parseInt(response.headers.get('X-Total-Count'))
             }
             resolve(ret)
           }).catch((e) => reject(e))
@@ -43,9 +43,9 @@ export default function request (url, options = {}) {
           reject(e)
         }
       }).catch(function (error) {
-        // console.log(':::', window.$message, '>>>', error.response)
-        window.$message.warning(error.response.headers['statusText'] || 'request error!')
-        // reject(error)
+        console.log(':::', window.$message, '>>>', error.response)
+        window.$message.warning(error.response.headers.get('X-Message') || 'request error!')
+        reject(error)
       })
   })
 }
