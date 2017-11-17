@@ -1,6 +1,6 @@
 # fish-admin
 > fish-admin is simple development boilerplate <br/>
-> ui: based on fish-ui (vue 2) <br/>
+> ui: based on [fish-ui](https://github.com/myliang/fish-ui) (vue 2) <br/>
 > api: based on springboot (java)
 
 # Page preview
